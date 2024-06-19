@@ -203,6 +203,18 @@ vim.keymap.set('v', '<leader>y', '"+y')
 vim.keymap.set('n', '<leader>y', '"+y')
 vim.keymap.set('n', '<leader>fr', [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]])
 
+vim.g.rustaceanvim = {
+  server = {
+    cmd = function()
+      local mason_registry = require 'mason-registry'
+      local ra_binary = mason_registry.is_installed 'rust-analyzer'
+          -- This may need to be tweaked, depending on the operating system.
+          and mason_registry.get_package('rust-analyzer'):get_install_path() .. '/rust-analyzer'
+        or 'rust-analyzer'
+      return { ra_binary } -- You can add args to the list, such as '--log-file'
+    end,
+  },
+}
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
 
@@ -436,6 +448,13 @@ require('lazy').setup({
       -- used for completion, annotations and signatures of Neovim apis
       { 'folke/neodev.nvim', opts = {} },
     },
+    opts = {
+      setup = {
+        rust_analyzer = function()
+          return true
+        end,
+      },
+    },
     config = function()
       -- Brief aside: **What is LSP?**
       --
@@ -580,7 +599,7 @@ require('lazy').setup({
         -- clangd = {},
         -- gopls = {},
         -- pyright = {},
-        rust_analyzer = {},
+        -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
         -- Some languages (like typescript) have entire language plugins that can be useful:
